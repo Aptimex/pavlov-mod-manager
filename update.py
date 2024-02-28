@@ -5,7 +5,7 @@
 import os
 import json
 import time
-import winsound
+#import winsound
 from sys import exit #otherwise PyInstaller complains
 
 #local files
