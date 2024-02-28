@@ -1,0 +1,5 @@
+AUTH_TOKEN
+build/
+dist/
+__pycache__/
+*.spec
