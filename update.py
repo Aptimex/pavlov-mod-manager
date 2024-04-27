@@ -6,6 +6,7 @@ import os
 import json
 import time
 #import winsound
+import textwrap
 from sys import exit #otherwise PyInstaller complains
 
 #local files
@@ -49,19 +50,16 @@ def queueSubscriptionUpdates():
     return
 
 def queueDownloads(mods):
-    #col1 = 15
-    #col2 = 12
-    #col3 = 1
-    print(f'{"Mod Name" :<25} {"Mod ID" :<12} {"Status" :<8}')
-    print("----------------------------------------------")
+    print(f'{"Mod Name" :<50} {"Mod ID" :<10} {"Size" :<10} {"Status" :<8}')
+    print("-------------------------------------------------------------------------------")
     #print(mods[0])
     for mod in mods:
-        #id = mod.id
         if not mod.currentVersion:
             mod.currentVersion = 0
         
-        #print(f"{mod.name} ({id}): \t", end="")
-        if mod.modfile_live == mod.currentVersion:
+        if int(mod.id) in IGNORE:
+            action = "In IGNORE list"
+        elif mod.modfile_live == mod.currentVersion:
             action = "Up to date"
         else:
             if mod.currentVersion == -1: #identified from subscription, not from disk
@@ -71,11 +69,24 @@ def queueDownloads(mods):
                     action = "Subscribed (needs download)"
                     toDownload.append(mod)
             else:
-                #print("Update available, adding to queue")
-                action = "Update available, adding to queue"
+                action = "Update available"
                 toDownload.append(mod)
         
-        print(f'{mod.name :<25} {mod.id :<12} {action :<1}')
+        #print(f'{mod.name :<25} {mod.id :<12} {action :<1}')
+        
+        modName = textwrap.fill(mod.name, width=49)
+        modLines = modName.split('\n')
+        numLines = len(modLines)
+        #print(modLines[0])
+        
+        for i, line in enumerate(modLines):
+            if i == 0:
+                print(f"{line :<50}", end="")
+            else:
+                print(f"\n {line :<49}", end="")
+            
+        print(f'{mod.id :<10} {downloads.size(mod.downloadSize) :<10} {action :<1}')
+        
         time.sleep(.01) # Totally unecessary, but makes long lists less visually jarring.
     
     return
@@ -87,6 +98,9 @@ def queueOnDiskUpdates():
     modVersions = []
     for folder in [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split("\\")[-1].startswith("UGC")]:
         modID = folder.split("UGC")[-1]
+        
+        if not modID.isdigit(): #skip folders that don't follow the valid mod folder name format
+            continue
         modIDs.append(modID)
         #mod = api.getModData(modID)
         
@@ -94,7 +108,7 @@ def queueOnDiskUpdates():
             with open(folder + "\\taint", "r") as taint:
                 installed = int(taint.read())
         except Exception as e:
-            print("Unable to identify installed version via taint file; mod will be treated as needing an update")
+            print(f"Unable to identify installed version of {modID} via taint file; mod will be treated as needing an update.")
             installed = 0
         
         modVersions.append(installed)
@@ -102,7 +116,7 @@ def queueOnDiskUpdates():
     #print(modIDs)
     print(f"Total local mods identified: {len(modIDs)}")
     print()
-    print("Retrieving online info about local mods, this may take a moment...")
+    print(f"Retrieving online info about {len(modIDs)} local mods...")
     print()
     
     mods = api.getAllModsData(modIDs)
@@ -111,6 +125,8 @@ def queueOnDiskUpdates():
         mod.currentVersion = modVersions[modIDs.index(str(id))]
         
     queueDownloads(mods)
+    print()
+    print(f"{len(toDownload)} mods need updates")
     return
     
     
@@ -124,6 +140,7 @@ def queueOnDiskUpdates():
         mods += api.getAllModsData(modBatch)
     '''
     
+    '''
     #col1 = 15
     #col2 = 12
     #col3 = 1
@@ -191,6 +208,7 @@ def queueOnDiskUpdates():
             continue
         else:
             print("Up to date!")
+    '''
 
 
 
@@ -225,7 +243,7 @@ def selectOperation():
     if select == 3:
         return "both"
     if select == 4:
-        print("Tip: you can search the ID value at https://mod.io/g/pavlov to find and subscribe to each installed mod")
+        print("Tip: you can search the ID value at https://mod.io/g/pavlov to find and subscribe to each installed mod.")
         queueOnDiskUpdates() #This prints the relevant info
         exit()
     if select == 5:
@@ -253,10 +271,12 @@ def main(args=None):
     if op == "local" or op == "both":
         print()
         queueOnDiskUpdates()
+        updateCount = len(toDownload)
+        
         print()
-        print(f"{len(toDownload)} mods queued for update")
-        for mod in toDownload:
-            print(f"Updating {mod.name} (ID {mod.id}), downloading {downloads.size(mod.downloadSize)}... ", flush=True)
+        #print(f"{len(toDownload)} mods queued for update")
+        for i, mod in enumerate(toDownload):
+            print(f"[{i+1}/{updateCount}] Updating {mod.name} (ID {mod.id}), downloading {downloads.size(mod.downloadSize)}... ", flush=True)
             downloads.downloadMod(mod)
             print("Done!")
             print()

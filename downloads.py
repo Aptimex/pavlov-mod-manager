@@ -60,12 +60,17 @@ def downloadFile(url, dir):
         print("Couldn't get content-length; might not be a download link?")
         return
     
-    filename = url.split("/")[-1]
+    #Get the filename from URL, strip off parameters
+    filename = url.split("/")[-1].split("?")[0].split("#")[0]
     filePath = dir + "\\" + filename
     
     #don't redownload if file already exists; if it's incomplete/invalid the hash check will catch it
     if os.path.exists(filePath):
         return filePath
+    
+    #sanity check
+    #if not THREADS or THREADS < 1:
+    #    THREADS = 1
     
     partSize = fileSize // THREADS
     for i in range(THREADS):
@@ -93,7 +98,7 @@ def downloadFile(url, dir):
         t.join() #blocks until the thread (download) completes
         i += 1
     
-    time.sleep(1)
+    time.sleep(.5)
     i = 0
     #join each part into the final file
     with open(filePath, 'wb') as outfile:
@@ -111,11 +116,12 @@ def downloadFile(url, dir):
 def downloadMod(mod):
     #print(mod.md5)
     #exit()
-    if mod.id in IGNORE:
+    if int(mod.id) in IGNORE:
         print("Skipping, mod is in the IGNORE list")
         return False
     
-    zipPath = downloadFile(mod.url, modPath)
+    #zipPath = downloadFile(mod.url, modPath)
+    zipPath = downloadFile(mod.downloadLink, modPath)
     if not zipPath:
         print("Error downloading mod file")
         return False
@@ -123,9 +129,9 @@ def downloadMod(mod):
     hash = hashlib.md5(open(zipPath,'rb').read()).hexdigest()
     if hash != mod.md5:
         print("Downloaded file hash is wrong")
-        print("Expected: {}".format(mod.md5))
-        print("Actual: {}".format(hash))
-        print("Size: {} (epected), {} (actual)".format(mod.downloadSize, os.path.getsize(zipPath)))
+        print(f"Expected: {mod.md5}")
+        print(f"Actual: {hash}")
+        print(f"Size: {mod.downloadSize} (expected), {os.path.getsize(zipPath)} (actual)")
         exit()
     
     dataPath = mod.modFolder + "\\Data"
@@ -138,7 +144,9 @@ def downloadMod(mod):
         try:
             zip.extractall(dataPath)
         except BadZipFile as e:
-            print("Mod ZIP file is invalid and cannot be installed. Consider unsubscribing/deleting (mod ID {})".format(mod.id))
+            print(f"Mod ZIP file is invalid and cannot be installed. Consider unsubscribing/deleting (mod ID {mod.id})")
+            os.remove(zipPath)
+            return False
             
     os.remove(zipPath)
     with open(mod.modFolder + "\\taint", "w") as taint:

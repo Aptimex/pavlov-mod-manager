@@ -2,8 +2,7 @@ import requests
 import json
 from urllib.request import urlopen
 
-#local files
-#from config import apiBase, modPath, PLATFORM, gameID, AUTH_HEADER
+#Config contains all the global variables we need
 from config import *
 
 class Mod:
@@ -12,11 +11,11 @@ class Mod:
     currentVersion = None
     modfile_live = None
     downloadLink = None
-    url = None
+    url = None #deprecating this to speed up queries
     downloadSize = None
     extractedSize = None
     md5 = None
-    filename = None
+    filename = None #This isn't really needed/used since Pavlov uses its own file naming conventions
     modFolder = None
     
     def __init__(self):
@@ -28,7 +27,6 @@ class Mod:
     
 #Pass in the URL path starting with /
 def makeAPIRequest(path, headers=API_HEADER):
-    #r = requests.get(url, headers=headers)
     r = requests.get(apiBase + path, headers=headers)
     if r.status_code != 200:
         if r.status_code == 429: #Too Many Requests
@@ -65,19 +63,27 @@ def getAllModsData(modIDs):
     modList = []
     
     #Process in 100-mod chunks (API limit is 100 results per query)
-    for i in range(((len(modIDs)-1) // 100) + 1):
-        modBatch = modIDs[i*100:(i+1)*100]
-        
-        qs = "id-in="
-        #for id in modIDs:
-        for id in modBatch:
-            qs += str(id) + ","
+    #for i in range(((len(modIDs)-1) // 100) + 1):
+    #    modBatch = modIDs[i*100:(i+1)*100]
+    #    print(len(modBatch))
+    
+    
+    done = False
+    offset = 0
+    while not done: #Handle pagination of results
+    
+        #Build the query string
+        modsQuery = "id-in="
+        #for id in modBatch:
+        for id in modIDs:
+            modsQuery += str(id) + ","
             
-        qs = qs[:-1] #remove trailing comma
+        modsQuery = modsQuery[:-1] #remove trailing comma
         
         #Get generic data about the mods
         #Explicitly specify the default limit in case it changes in the future
-        endpoint = f"/games/{gameID}/mods/?_limit=100&{qs}"
+        #endpoint = f"/games/{gameID}/mods/?_limit=100&{modsQuery}"
+        endpoint = f"/games/{gameID}/mods/?_offset={offset}&{modsQuery}"
         
         r = makeAPIRequest(endpoint)
         if r.status_code != 200:
@@ -85,11 +91,16 @@ def getAllModsData(modIDs):
             return None
         
         data = r.json()
-        
+        if data["result_count"] + data["result_offset"] >= data["result_total"]:
+            done = True
+        else:
+            offset += data["result_count"]
+
         '''
-        with open("A:\\Users\\Adam\\Desktop\\pv.txt", "w") as f:
-            f.truncate()
-            f.write(json.dumps(data, indent=2))
+        for v in data:
+            if v != "data":
+                print(f"{v}:{data[v]}")
+        print()
         '''
         
         for mod in data["data"]:
@@ -117,14 +128,25 @@ def getAllModsData(modIDs):
             modData.extractedSize = modfileData["filesize_uncompressed"]
             modData.md5 = modfileData["filehash"]["md5"]
             modData.downloadLink = modfileData["download"]["binary_url"]
-            modData.url = requests.head(modData.downloadLink, allow_redirects=True).url #resolve to final download URL
-            modData.filename = modData.url.split("/")[-1]
+            #modData.url = requests.head(modData.downloadLink, allow_redirects=True).url #resolve to final download URL
+            #modData.filename = modData.url.split("/")[-1]
+            modData.filename = modfileData["filename"]
             modData.modFolder = "{}\\UGC{}".format(modPath, modData.id)
             
             modList.append(modData)
+        
+    for modNum in modIDs:
+        found = False
+        for mod in modList:
+            if mod.id == modNum or str(mod.id) == str(modNum):
+                found = True
+                break
+        if not found:
+            print(f"WARNING: No data returned for Mod ID {modNum}")
     
     return modList
 
+'''
 #get the latest platform-specific metadata about a mod
 #Requires two API requests: One to get generic data (including mod name) and one to get data about the latest version
 def getModData(modID, basic=False):
@@ -167,3 +189,4 @@ def getModData(modID, basic=False):
     modData.modFolder = "{}\\UGC{}".format(modPath, modID)
     
     return modData
+'''

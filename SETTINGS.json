@@ -1,0 +1,9 @@
+{
+    "mods_path": "%localappdata%\\Pavlov\\Saved\\Mods",
+    "game_platform": "windows",
+    "download_threads": 10,
+    "ignore_mods": [
+        3051820,
+        3051820
+    ]
+}

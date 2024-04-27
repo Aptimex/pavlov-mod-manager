@@ -1,5 +1,5 @@
 # Pavlov Mod Updater
-Keep your Pavlop map mods from Mod.io up to date on Windows. Only tested on Windows with the Steam game, and only with Map mods.
+Keep your Pavlop mods from Mod.io up to date on Windows. Only tested on Windows with the Steam game. Seems to work well for map and non-map mods.
 
 Primary Features:
 - Detect and update out-of-date maps that are already installed
@@ -17,7 +17,9 @@ Your mod.io API key needs to go in an AUTH_TOKEN file in the same folder as this
 3. Now enter any name for the token (eg. Pavlov), choose Read from the dropdown, and press the + button
 4. "TOKEN CREATED" will appear and you can copy that token using the copy button on the left side of the text field
 
-Then run `python ./update.py` and select what your want to do from the prompts. An example of what this looks like is provided below.
+There's also a `SETTINGS.json` file that contains a few things you can tweak, including the folder where your mods are location if they aren't in the default location. For most people the defaults should be fine.
+
+Run `python ./update.py` and select what your want to do from the prompts. An example of what this looks like is provided below.
 ```
 PS C:\Users\USERNAME\git\pavlov-mod-manager> .\update.py
 Select an operation (default is 1):
@@ -31,40 +33,39 @@ Select: 1
 
 
 Reading mods from disk (C:\Users\USERNAME\AppData\Local\Pavlov\Saved\Mods)
-Total local mods identified: 75
+Total local mods identified: 102
 
-Retrieving online info about local mods, this may take a moment...
+Retrieving online info about 102 local mods...
 
-Mod Name                  Mod ID       Status
-----------------------------------------------
-Gravity                   2773760      Up to date
-Tuscan 2022               2788214      Up to date
-Pipes                     2788277      Up to date
-de_basalt                 2803820      Up to date
-MW3: Dome                 2804210      Update available, adding to queue
+Mod Name                                           Mod ID     Size       Status
+-------------------------------------------------------------------------------
+Gravity                                           2773760    13.0 MB    Up to date
+Tuscan 2022                                       2788214    1.6 GB     Up to date
+Pipes                                             2788277    868.0 MB   Up to date
+de_basalt                                         2803820    954.7 MB   Up to date
+MW3: Dome                                         2804210    151.6 MB   Up to date
+McDonalds                                         2804322    223.7 MB   Up to date
+Dust 2 CSGO                                       2804502    774.4 MB   Up to date
+Stash House                                       2810348    387.8 MB   Up to date
+Atlas                                             2811148    346.7 MB   Up to date
+007 Casino Royale                                 2814416    195.6 MB   Update available
 ...
 [truncated for brevity]
 ...
-Yantar Facility           3560062      Update available, adding to queue
-Battery                   3564015      Up to date
-Crash                     3568020      Up to date
-Train CSGO                3624316      Up to date
-de_defcon (WIP)           3649233      Up to date
+BananaGun                                         3931603    5.8 MB     Update available
+[MOD] Modify Items                                3943563    9.5 KB     Up to date
 
-4 mods queued for update
-Updating MW3: Dome (ID 2804210), downloading 152.6 MB...
+12 mods need updates
+
+[1/12] Updating 007 Casino Royale (ID 2814416), downloading 195.6 MB...
 Download complete, installing...
 Done!
 
-Updating Vertigo [CSGO] (ID 3188315), downloading 821.3 MB...
-Download complete, installing...
-Done!
+...
+[truncated for brevity]
+...
 
-Updating Pripyat CSGO (ID 3231288), downloading 423.7 MB...
-Download complete, installing...
-Done!
-
-Updating Yantar Facility (ID 3560062), downloading 330.8 MB...
+[12/12] Updating BananaGun (ID 3931603), downloading 5.8 MB...
 Download complete, installing...
 Done!
 
@@ -74,6 +75,6 @@ PS C:\Users\USERNAME\git\pavlov-mod-manager>
 ```
 
 ## Uh, why does this exist when several other repos do the same thing?
-Because I like Python better than having to rely on .net or other dependencies. Eventually I'll use PyInstaller to generate a nice standalone executable that can be published in a release so you won't even have to have have Python installed to run this.
+Because I like Python better than having to rely on .net or other dependencies. Eventually I'll use PyInstaller to generate a nice standalone executable that can be published in a release so you won't even have to have Python installed to run this.
 
 Also, I wanted to improve on existing projects (like presenting options in a menu format instead of CLI arguments), but couldn't find a project that was written in Python or another language I like.
