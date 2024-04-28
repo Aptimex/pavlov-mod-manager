@@ -19,6 +19,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/upload-artifact@v4
+      with:
+        name: pmm.exe
+        path: dist/update.exe
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -36,6 +40,4 @@ jobs:
       run: |
         ./v-pmm/Scripts/activate
         python -m PyInstaller -F ./update.py
-      with:
-        name: pmm.exe
-        path: dist/update.exe
+        
