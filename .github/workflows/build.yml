@@ -38,6 +38,8 @@ jobs:
         python -m PyInstaller -F ./update.py
     - uses: actions/upload-artifact@v4
       with:
-        name: pmm.exe
-        path: dist/update.exe
+        name: pmm.zip
+        path: |
+          dist/update.exe
+          SETTINGS.json
         
