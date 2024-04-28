@@ -36,10 +36,11 @@ jobs:
       run: |
         ./v-pmm/Scripts/activate
         python -m PyInstaller -F ./update.py
+        mv dist/update.exe pmm.exe
     - uses: actions/upload-artifact@v4
       with:
-        name: pmm.zip
+        name: pavlov-mod-manager
         path: |
-          dist/update.exe
+          pmm.exe
           SETTINGS.json
         

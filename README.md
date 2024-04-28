@@ -10,16 +10,16 @@ Primary Features:
 Tip: If you want to trigger a re-install of a map, use this program to list installed mods (option 4) and note the map's `Mod ID`. Then navigate to `%localappdata%\Pavlov\Saved\Mods\UGC<MOD_ID>` (replace `<MOD_ID>` accordingly) and delete the `taint` file located there. Then run the updater (option 1) and the mod will be re-downloaded and re-installed.  
 
 ## Usage
-Your mod.io API key needs to go in an AUTH_TOKEN file in the same folder as this program. Instructions curtesy of [RainOrigami's repo](https://github.com/RainOrigami/DownloadPavlovMapsFromModIo):
+Your mod.io API key needs to go in a file named `AUTH_TOKEN` in the same folder as this program. Instructions curtesy of [RainOrigami's repo](https://github.com/RainOrigami/DownloadPavlovMapsFromModIo):
 
 1. Go to https://mod.io/me/access
 2. Under OAuth Access, enter any name (eg. Pavlov) and press Create
 3. Now enter any name for the token (eg. Pavlov), choose Read from the dropdown, and press the + button
 4. "TOKEN CREATED" will appear and you can copy that token using the copy button on the left side of the text field
 
-There's also a `SETTINGS.json` file that contains a few things you can tweak, including the folder where your mods are location if they aren't in the default location. For most people the defaults should be fine.
+The `SETTINGS.json` file contains a few things you can tweak, including the folder where your mods are located. For most people the defaults should be fine.
 
-Run `python ./update.py` and select what your want to do from the prompts. An example of what this looks like is provided below.
+Run `python ./update.py` (or `pmm.exe` if you downloaded a release) and select what your want to do from the prompts. An example of what this looks like is provided below.
 ```
 PS C:\Users\USERNAME\git\pavlov-mod-manager> .\update.py
 Select an operation (default is 1):
