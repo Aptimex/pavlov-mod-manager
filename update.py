@@ -25,7 +25,7 @@ def queueSubscriptionUpdates():
     r = api.makeAPIRequest("/me/subscribed", AUTH_HEADER) #API doesn't like it if you include the platform header here
     if r.status_code != 200:
         print(f"Error getting user subscriptions: code {r.status_code}")
-        exit()
+        stop()
     #print(json.dumps(r.json(), indent=2))
     
     if r.json()["result_count"] < 1:
@@ -128,89 +128,6 @@ def queueOnDiskUpdates():
     print()
     print(f"{len(toDownload)} mods need updates")
     return
-    
-    
-    
-    
-    
-    '''
-    mods = []
-    for i in range(((len(modIDs)-1) // 100) + 1):
-        modBatch = modIDs[i*100:(i+1)*100]
-        mods += api.getAllModsData(modBatch)
-    '''
-    
-    '''
-    #col1 = 15
-    #col2 = 12
-    #col3 = 1
-    print(f'{"Mod Name" :<25} {"Mod ID" :<12} {"Status" :<8}')
-    print("----------------------------------------------")
-    #print(mods[0])
-    for mod in mods:
-        id = mod.id
-        currentVersion = modVersions[modIDs.index(str(id))]
-        
-        #print(f"{mod.name} ({id}): \t", end="")
-        if mod.modfile_live != currentVersion:
-            #print("Update available, adding to queue")
-            action = "Update available, adding to queue"
-            toDownload.append(mod)
-        else:
-            #print("Up to date")
-            action = "Up to date"
-        
-        print(f'{mod.name :<25} {mod.id :<12} {action :<1}')
-    
-    return
-    
-    
-    
-    
-    #list folders in the modPath that start with UGC
-    for folder in [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split("\\")[-1].startswith("UGC")]:
-        modID = folder.split("UGC")[-1]
-        mod = api.getModData(modID)
-        if not mod:
-            print("Couldn't find mod data associated with folder '{}', skipping".format(folder))
-            continue
-        print(mod.name + ": ", end="")
-        
-        try:
-            with open(folder + "\\taint", "r") as taint:
-                installed = int(taint.read())
-        except Exception as e:
-            print("Unable to verify installed version via taint file. Adding to queue to be safe.")
-            toDownload.append(mod)
-            continue
-        
-        if installed != mod.modfile_live:
-            print("Update available, adding to queue")
-            toDownload.append(mod)
-            continue
-        
-        #also check the installed size to possibly detect and fix corrupted mods
-        #pakName = ""
-        onDiskSize = 0
-        dataFolder = mod.modFolder + "\\Data"
-        if not os.path.exists(dataFolder):
-            print("Mod folder missing Data subdir, adding to queue")
-            toDownload.append(mod)
-            continue
-            
-        for file in os.listdir(dataFolder):
-            onDiskSize += os.path.getsize(dataFolder + "\\" + file)
-        
-        if onDiskSize != mod.extractedSize:
-            print("Installed mod size is wrong, possibly corrupted. Adding to queue")
-            #print("{} (actual) vs {} (expected)".format(onDiskSize, expectedSize))
-            toDownload.append(mod)
-            continue
-        else:
-            print("Up to date!")
-    '''
-
-
 
 def selectOperation():
     print("Select an operation (default is 1):")
@@ -245,10 +162,10 @@ def selectOperation():
     if select == 4:
         print("Tip: you can search the ID value at https://mod.io/g/pavlov to find and subscribe to each installed mod.")
         queueOnDiskUpdates() #This prints the relevant info
-        exit()
+        stop()
     if select == 5:
         queueSubscriptionUpdates()
-        exit()
+        stop()
     
 
 def main(args=None):
@@ -256,7 +173,7 @@ def main(args=None):
     
     if not os.path.exists(modPath):
         print(f"Root mod path ({modPath}) doesn't exist, can't continue. Verify your config settings.")
-        exit()
+        
     
     #make sure auth token works before proceeding
     r = api.makeAPIRequest("/me")
@@ -264,7 +181,7 @@ def main(args=None):
         print(f"Error using token to get user data: status code {r.status_code}")
         if r.status_code >= 400 and r.status_code < 500:
             print("Your OAuth token may be invalid or missing.")
-        exit()
+        stop()
     
     op = selectOperation()
     
@@ -297,7 +214,7 @@ def main(args=None):
         toDownload = []
         print("Subscription downloads complete!")
     
-    
+    stop()
 
 if __name__ == '__main__':
     main()

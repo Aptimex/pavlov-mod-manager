@@ -62,27 +62,18 @@ def getModfileData(modID, modfile_live):
 def getAllModsData(modIDs):
     modList = []
     
-    #Process in 100-mod chunks (API limit is 100 results per query)
-    #for i in range(((len(modIDs)-1) // 100) + 1):
-    #    modBatch = modIDs[i*100:(i+1)*100]
-    #    print(len(modBatch))
-    
-    
     done = False
     offset = 0
     while not done: #Handle pagination of results
     
         #Build the query string
         modsQuery = "id-in="
-        #for id in modBatch:
         for id in modIDs:
             modsQuery += str(id) + ","
             
         modsQuery = modsQuery[:-1] #remove trailing comma
         
         #Get generic data about the mods
-        #Explicitly specify the default limit in case it changes in the future
-        #endpoint = f"/games/{gameID}/mods/?_limit=100&{modsQuery}"
         endpoint = f"/games/{gameID}/mods/?_offset={offset}&{modsQuery}"
         
         r = makeAPIRequest(endpoint)
@@ -145,48 +136,3 @@ def getAllModsData(modIDs):
             print(f"WARNING: No data returned for Mod ID {modNum}")
     
     return modList
-
-'''
-#get the latest platform-specific metadata about a mod
-#Requires two API requests: One to get generic data (including mod name) and one to get data about the latest version
-def getModData(modID, basic=False):
-    modData = Mod()
-    #modfileData = None
-    
-    #Get generic data about the mod
-    r = makeAPIRequest("/games/{}/mods/{}".format(gameID, modID))
-    if r.status_code != 200:
-        print("Error getting mod info: code " + str(r.status_code))
-        return None
-    
-    data = r.json()
-    modData.name = data["name"] #not available from Modfile Object API
-    modData.id = data["id"]
-    
-    #get current (live) modfile ID for windows platform
-    for p in data["platforms"]:
-        if p["platform"].lower() == PLATFORM.lower():
-            modData.modfile_live = p["modfile_live"]
-            break
-    if modData.modfile_live == None:
-        print("Couldn't find '{}' version of mod {}, consider unsubscribing/deleting".format(PLATFORM.lower(), modID))
-        return None
-    
-    if basic:
-        return modData
-    
-    modfileData = getModfileData(modID, modData.modfile_live)
-    if not modfileData:
-        print("Unable to obtain mod's most recent data")
-        return None
-    
-    modData.downloadSize = modfileData["filesize"]
-    modData.extractedSize = modfileData["filesize_uncompressed"]
-    modData.md5 = modfileData["filehash"]["md5"]
-    modData.downloadLink = modfileData["download"]["binary_url"]
-    modData.url = urlopen(modData.downloadLink).url #resolve to final download URL
-    modData.filename = modData.url.split("/")[-1]
-    modData.modFolder = "{}\\UGC{}".format(modPath, modID)
-    
-    return modData
-'''

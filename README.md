@@ -19,9 +19,9 @@ Your mod.io API key needs to go in a file named `AUTH_TOKEN` in the same folder 
 
 The `SETTINGS.json` file contains a few things you can tweak, including the folder where your mods are located. For most people the defaults should be fine.
 
-Run `python ./update.py` (or `pmm.exe` if you downloaded a release) and select what your want to do from the prompts. An example of what this looks like is provided below.
+Run `python ./update.py` (or `pmm.exe` if you downloaded a release; can also be double-clicked) and select what your want to do from the prompts. An example of what this looks like is provided below.
 ```
-PS C:\Users\USERNAME\git\pavlov-mod-manager> .\update.py
+PS C:\Users\USERNAME\git\pavlov-mod-manager> pmm.exe
 Select an operation (default is 1):
 [1] Update all installed mods
 [2] Download missing subscribed mods
@@ -74,7 +74,9 @@ Local mod updates complete!
 PS C:\Users\USERNAME\git\pavlov-mod-manager>
 ```
 
+If you are double-clicking the `pmm.exe` file to run it and it does nothing (or briefly flashes a window), run it from PowerShell instead.
+
 ## Uh, why does this exist when several other repos do the same thing?
-Because I like Python better than having to rely on .net or other dependencies. Eventually I'll use PyInstaller to generate a nice standalone executable that can be published in a release so you won't even have to have Python installed to run this.
+Because I like Python better than having to rely on .net or other dependencies. This uses PyInstaller to generate a nice standalone executable that can be published in a release so you won't even have to have Python installed to run this.
 
 Also, I wanted to improve on existing projects (like presenting options in a menu format instead of CLI arguments), but couldn't find a project that was written in Python or another language I like.

@@ -20,14 +20,12 @@ def downloadHandler(start, end, url, filePath, part):
     #exit()
     
     # request the specified part and get into variable
-    #r = requests.get(url, headers=header, stream=True)
-    #r = requests.get(url, headers=header)
     req = Request(url, headers=header)
     r = urlopen(req)
     #if r.status_code != 206:
     if r.code != 206:
         print("Status code error for download: {}".format(r.status_code))
-        exit()
+        stop()
     
     #size = int(r.headers["content-length"])
     size = int(r.getheader("content-length"))
@@ -40,13 +38,7 @@ def downloadHandler(start, end, url, filePath, part):
   
     # open the file (create and write, binary) and write the content
     with open(filePath + ".part" + str(part), "w+b") as fp:
-        #fp.seek(start)
-        #var = fp.tell()
-        #fp.write(r.content)
         fp.write(r.read())
-        #for chunk in r.iter_content(chunk_size=128):
-            #fp.write(chunk)
-        #fp.write(r.raw.read(size))
 
 
 #uses threading to download the file faster
@@ -67,10 +59,6 @@ def downloadFile(url, dir):
     #don't redownload if file already exists; if it's incomplete/invalid the hash check will catch it
     if os.path.exists(filePath):
         return filePath
-    
-    #sanity check
-    #if not THREADS or THREADS < 1:
-    #    THREADS = 1
     
     partSize = fileSize // THREADS
     for i in range(THREADS):
@@ -132,7 +120,7 @@ def downloadMod(mod):
         print(f"Expected: {mod.md5}")
         print(f"Actual: {hash}")
         print(f"Size: {mod.downloadSize} (expected), {os.path.getsize(zipPath)} (actual)")
-        exit()
+        stop()
     
     dataPath = mod.modFolder + "\\Data"
     
@@ -168,3 +156,9 @@ def size(num):
         return f"{sNum[:-6]}.{sNum[-6]} MB"
     if digs <= 12:
         return f"{sNum[:-9]}.{sNum[-9]} GB"
+
+#Just prompts for input before calling exit() so you can read the error message before the window closes
+def stop(exitCode = 0):
+    print("Press any key to exit")
+    input()
+    exit(exitCode)
