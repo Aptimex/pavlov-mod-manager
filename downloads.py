@@ -54,7 +54,7 @@ def downloadFile(url, dir):
     
     #Get the filename from URL, strip off parameters
     filename = url.split("/")[-1].split("?")[0].split("#")[0]
-    filePath = dir + "\\" + filename
+    filePath = os.path.join(dir, filename)
     
     #don't redownload if file already exists; if it's incomplete/invalid the hash check will catch it
     if os.path.exists(filePath):
@@ -122,7 +122,7 @@ def downloadMod(mod):
         print(f"Size: {mod.downloadSize} (expected), {os.path.getsize(zipPath)} (actual)")
         stop()
     
-    dataPath = mod.modFolder + "\\Data"
+    dataPath = os.path.join(mod.modFolder, "Data")
     
     #clean old files to make sure we don't end up with leftovers
     if os.path.exists(mod.modFolder):
@@ -137,7 +137,7 @@ def downloadMod(mod):
             return False
             
     os.remove(zipPath)
-    with open(mod.modFolder + "\\taint", "w") as taint:
+    with open(os.path.join(mod.modFolder, "taint"), "w") as taint:
         taint.write(str(mod.modfile_live))
     
     return True
