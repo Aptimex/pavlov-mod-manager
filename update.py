@@ -96,7 +96,7 @@ def queueOnDiskUpdates():
     
     modIDs = []
     modVersions = []
-    for folder in [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split("\\")[-1].startswith("UGC")]:
+    for folder in [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split(os.sep)[-1].startswith("UGC")]:
         modID = folder.split("UGC")[-1]
         
         if not modID.isdigit(): #skip folders that don't follow the valid mod folder name format
@@ -105,7 +105,7 @@ def queueOnDiskUpdates():
         #mod = api.getModData(modID)
         
         try:
-            with open(folder + "\\taint", "r") as taint:
+            with open(os.path.join(folder, "taint"), "r") as taint:
                 installed = int(taint.read())
         except Exception as e:
             print(f"Unable to identify installed version of {modID} via taint file; mod will be treated as needing an update.")
