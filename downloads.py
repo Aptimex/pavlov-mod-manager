@@ -6,6 +6,7 @@ import requests
 from urllib.request import urlopen, Request
 from zipfile import ZipFile, BadZipFile
 import time
+import os
 
 #local files
 from config import *
@@ -101,7 +102,7 @@ def downloadFile(url, dir):
     print("Download complete, installing...")
     return filePath
 
-def downloadMod(mod):
+def downloadMod(mod, test=False):
     #print(mod.md5)
     #exit()
     if int(mod.id) in IGNORE:
@@ -123,6 +124,11 @@ def downloadMod(mod):
         stop()
     
     dataPath = os.path.join(mod.modFolder, "Data")
+    
+    if test:
+        print(f"TEST flag set, skipping installation")
+        os.remove(zipPath)
+        return True
     
     #clean old files to make sure we don't end up with leftovers
     if os.path.exists(mod.modFolder):

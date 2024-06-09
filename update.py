@@ -8,6 +8,7 @@ import time
 #import winsound
 import textwrap
 from sys import exit #otherwise PyInstaller complains
+import argparse
 
 #local files
 #from config import modPath, gameID, apiBase
@@ -96,10 +97,16 @@ def queueOnDiskUpdates():
     
     modIDs = []
     modVersions = []
-    for folder in [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split(os.sep)[-1].startswith("UGC")]:
+    
+    #Only process folders that start with UGC as expected
+    modFolders = [f[0] for f in os.walk(modPath) if os.path.isdir(f[0]) and f[0].split(os.sep)[-1].startswith("UGC")]
+    
+    for folder in modFolders:
         modID = folder.split("UGC")[-1]
         
-        if not modID.isdigit(): #skip folders that don't follow the valid mod folder name format
+        #skip folders that don't follow the valid mod folder name format
+        #avoids craches if the user has backups of folders, e.g. ending in .bak or similar
+        if not modID.isdigit():
             continue
         modIDs.append(modID)
         #mod = api.getModData(modID)
@@ -194,7 +201,13 @@ def main(args=None):
         #print(f"{len(toDownload)} mods queued for update")
         for i, mod in enumerate(toDownload):
             print(f"[{i+1}/{updateCount}] Updating {mod.name} (ID {mod.id}), downloading {downloads.size(mod.downloadSize)}... ", flush=True)
-            downloads.downloadMod(mod)
+            
+            if args.test:
+                downloads.downloadMod(mod, test=True)
+                break
+            else:
+                downloads.downloadMod(mod)
+            
             print("Done!")
             print()
         
@@ -217,4 +230,8 @@ def main(args=None):
     stop()
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--test", action="store_true", help="Flag used for internal testing; don't use this")
+    
+    args = parser.parse_args()
+    main(args)
