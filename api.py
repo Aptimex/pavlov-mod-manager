@@ -122,7 +122,7 @@ def getAllModsData(modIDs):
             #modData.url = requests.head(modData.downloadLink, allow_redirects=True).url #resolve to final download URL
             #modData.filename = modData.url.split("/")[-1]
             modData.filename = modfileData["filename"]
-            modData.modFolder = "{}\\UGC{}".format(modPath, modData.id)
+            modData.modFolder = os.path.join(modPath, f"UGC{modData.id}")
             
             modList.append(modData)
         

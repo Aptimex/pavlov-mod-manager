@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+from sys import exit #otherwise PyInstaller complains
 
 #Just prompts for input before calling exit() so you can read the error message before the window closes
 def stop(exitCode = 0):

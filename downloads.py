@@ -6,6 +6,7 @@ import requests
 from urllib.request import urlopen, Request
 from zipfile import ZipFile, BadZipFile
 import time
+import os
 
 #local files
 from config import *
@@ -54,7 +55,7 @@ def downloadFile(url, dir):
     
     #Get the filename from URL, strip off parameters
     filename = url.split("/")[-1].split("?")[0].split("#")[0]
-    filePath = dir + "\\" + filename
+    filePath = os.path.join(dir, filename)
     
     #don't redownload if file already exists; if it's incomplete/invalid the hash check will catch it
     if os.path.exists(filePath):
@@ -101,7 +102,7 @@ def downloadFile(url, dir):
     print("Download complete, installing...")
     return filePath
 
-def downloadMod(mod):
+def downloadMod(mod, test=False):
     #print(mod.md5)
     #exit()
     if int(mod.id) in IGNORE:
@@ -122,7 +123,12 @@ def downloadMod(mod):
         print(f"Size: {mod.downloadSize} (expected), {os.path.getsize(zipPath)} (actual)")
         stop()
     
-    dataPath = mod.modFolder + "\\Data"
+    dataPath = os.path.join(mod.modFolder, "Data")
+    
+    if test:
+        print(f"TEST flag set, skipping installation")
+        os.remove(zipPath)
+        return True
     
     #clean old files to make sure we don't end up with leftovers
     if os.path.exists(mod.modFolder):
@@ -137,7 +143,7 @@ def downloadMod(mod):
             return False
             
     os.remove(zipPath)
-    with open(mod.modFolder + "\\taint", "w") as taint:
+    with open(os.path.join(mod.modFolder, "taint"), "w") as taint:
         taint.write(str(mod.modfile_live))
     
     return True
