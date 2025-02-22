@@ -134,13 +134,19 @@ def downloadMod(mod, test=False):
     if os.path.exists(mod.modFolder):
         shutil.rmtree(mod.modFolder)
     
+    zipFail = False
     with ZipFile(zipPath, 'r') as zip:
         try:
             zip.extractall(dataPath)
         except BadZipFile as e:
-            print(f"Mod ZIP file is invalid and cannot be installed. Consider unsubscribing/deleting (mod ID {mod.id})")
-            os.remove(zipPath)
-            return False
+            print(f"Mod ZIP file is invalid/corrupted and cannot be safely installed. Consider unsubscribing or adding ({mod.id}) to the ignore_mods list in SETTINGS.json")
+            print("Installing/updating this mod through the Pavlov game may also work.")
+            zipFail = True
+    
+    #Can't delete the bad file inside the with statement, causes another exception (file still in use)
+    if zipFail:
+        os.remove(zipPath)
+        return False
             
     os.remove(zipPath)
     with open(os.path.join(mod.modFolder, "taint"), "w") as taint:
