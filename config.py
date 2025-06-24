@@ -26,6 +26,7 @@ try:
     PLATFORM = settings["game_platform"]
     THREADS = settings["download_threads"]
     IGNORE = settings["ignore_mods"]
+    CONFIRM_DOWNLOADS = settings["confirm_downloads"]
     
     if THREADS < 1:
         THREADS = 1

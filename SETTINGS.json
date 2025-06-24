@@ -2,5 +2,6 @@
     "mods_path": "%localappdata%\\Pavlov\\Saved\\Mods",
     "game_platform": "windows",
     "download_threads": 10,
-    "ignore_mods": []
+    "ignore_mods": [],
+    "confirm_downloads": false
 }

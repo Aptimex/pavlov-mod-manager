@@ -109,6 +109,13 @@ def downloadMod(mod, test=False):
         print("Skipping, mod is in the IGNORE list")
         return False
     
+    if CONFIRM_DOWNLOADS:
+        confirm = input("Download/Update this mod? (Y/n): ")
+        if confirm.lower() != "y" and confirm.lower() != "yes" and confirm != "":
+            print("Skipping mod download")
+            return False
+        
+    
     #zipPath = downloadFile(mod.url, modPath)
     zipPath = downloadFile(mod.downloadLink, modPath)
     if not zipPath:

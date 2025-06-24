@@ -18,6 +18,7 @@ Your mod.io API key needs to go in a file named `AUTH_TOKEN` in the same folder 
 4. "TOKEN CREATED" will appear and you can copy that token using the copy button on the left side of the text field
 
 The `SETTINGS.json` file contains a few things you can tweak, including the folder where your mods are located. For most people the defaults should be fine.
+- You can set the `confirm_downloads` key to `true` or `false` to control whether you get prompted for confirmation before each mod download/update. Default is `false` to always update everything with no further input. 
 
 Run `python ./update.py` (or `pmm.exe` if you downloaded a release; can also be double-clicked) and select what your want to do from the prompts. An example of what this looks like is provided below.
 ```
