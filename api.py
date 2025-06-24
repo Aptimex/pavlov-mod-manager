@@ -1,6 +1,6 @@
 import requests
-import json
-from urllib.request import urlopen
+#import json
+import time
 
 #Config contains all the global variables we need
 from config import *
@@ -33,7 +33,7 @@ def makeAPIRequest(path, headers=API_HEADER):
             wait = int(r.headers["retry-after"]) + 1
             print(f"Rate limit detected, waiting {wait} seconds to continue")
             time.sleep(wait)
-            return makeAPIRequest(url, headers)
+            return makeAPIRequest(path, headers)
             
         print(f"Request error, code {r.status_code}")
         #return (None, r.status_code)
@@ -105,7 +105,7 @@ def getAllModsData(modIDs):
                     modData.modfile_live = p["modfile_live"]
                     break
             if modData.modfile_live == None:
-                print(f"Couldn't find '{PLATFORM}' version of mod {modID}, consider unsubscribing/deleting")
+                print(f"Couldn't find '{PLATFORM}' version of mod {modData.id}, consider unsubscribing/deleting")
                 continue
             
             
