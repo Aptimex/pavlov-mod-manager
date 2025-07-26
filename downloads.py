@@ -128,7 +128,10 @@ def downloadMod(mod, test=False):
         print(f"Expected: {mod.md5}")
         print(f"Actual: {hash}")
         print(f"Size: {mod.downloadSize} (expected), {os.path.getsize(zipPath)} (actual)")
-        stop()
+        
+        print("Deleting downloaded file and skipping installation")
+        os.remove(zipPath)
+        return False
     
     dataPath = os.path.join(mod.modFolder, "Data")
     
