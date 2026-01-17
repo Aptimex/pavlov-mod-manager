@@ -1,5 +1,5 @@
 # Pavlov Mod Updater
-Keep your Pavlop mods from Mod.io up to date on Windows. Only tested on Windows with the Steam game. Seems to work well for map and non-map mods.
+Keep your [Pavlov](https://store.steampowered.com/app/555160/Pavlov/) mods from Mod.io up to date on Windows. Only tested on Windows with the Steam game. Seems to work well for map and non-map mods.
 
 Primary Features:
 - Detect and update out-of-date maps that are already installed
